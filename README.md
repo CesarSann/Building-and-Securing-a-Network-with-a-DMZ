@@ -1,4 +1,3 @@
- 
 # Informe de configuración de DMZ con Cisco Packet Tracer - Cesar Sandino
 
 
@@ -11,7 +10,6 @@ Configurar una DMZ segura usando un router Cisco ISR, aplicando NAT y ACLs para 
 
 ### 2. Topología implementada
 
-> Describe la red. Puedes incluir una imagen si el software lo permite (captura de Packet Tracer).
 Esta topologia esta divida principalmente en tres zonas las cuales se controlan por un router central.
  
 - **Red Interna (LAN)** Esta red es de acceso exclusivo para empleados internos de la corporación. 
@@ -35,19 +33,66 @@ Esta topologia esta divida principalmente en tres zonas las cuales se controlan 
 
 ### 4. Configuración aplicada 
 
-## Configuración de NATs estaticas
+#### Configuración de NATs estaticas
 Dominio NAT implementado para que el trafico externo pueda acceder al servidor interno (en este caso DMZ) sin exponer directamtente la red interna. ademas de la configuración de interfaces de sus respectivas redes.
 
 - Interfaces configuradas con `ip address`
 
+```Router_FW(config)# interface GigabitEthernet0/0
+
+Router_FW(config-if)# ip address 192.168.1.1 255.255.255.0
+
+Router_FW(config-if)# no shutdown
+
+Router_FW(config-if)# exit
+
+
+Router_FW(config)# interface GigabitEthernet0/1
+
+Router_FW(config-if)# ip address 192.168.2.1 255.255.255.0
+
+Router_FW(config-if)# no shutdown
+
+Router_FW(config-if)# exit
+
+
+
+Router_FW(config)# interface GigabitEthernet0/2
+
+Router_FW(config-if)# ip address 192.168.3.1 255.255.255.0
+
+Router_FW(config-if)# no shutdown
+
+Router_FW(config-if)# exit
+
+```
 
 - NAT:
-```bash
-ip nat inside source static 192.168.2.10 192.168.3.1
+```
+Router_FW# configure terminal
+
+Router_FW(config)# interface GigabitEthernet0/1
+
+Router_FW(config-if)# ip nat inside  
+
+Router_FW(config-if)# exit
+
+
+Router_FW(config)# interface GigabitEthernet0/2
+
+Router_FW(config-if)# ip nat outside 
+
+Router_FW(config-if)# exit
+
+
+Router_FW(config)# ip nat inside source static 192.168.2.10 192.168.3.1
+
+Router_FW(config)# end
 ```
 - ACLs:
-```bash
+```
 access-list 101 permit tcp any host 192.168.3.1 eq 80
+
 access-list 100 deny ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
 ```
 
@@ -55,21 +100,23 @@ access-list 100 deny ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
 
 ### 5. Verificaciones realizadas
 
-> Describe las pruebas y su resultado. Incluye capturas o salidas de comandos si se puede.
+- `ping` desde PC_Internal al servidor web: 
 
-- `ping` desde PC_Internal al router: ✅
+![alt text](image.png)
+
 - Acceso web desde PC_External: ✅
+
+![alt text](image-1.png)
+
+
 - Bloqueo de acceso desde DMZ a LAN: ✅
 
+![alt text](image-2.png)
 
 ### 6. Conclusiones y recomendaciones
 
-> ¿Qué aprendiste con este ejercicio? ¿Qué mejorarías?
+Se logró implementar con exito direcciones nat estaticas, ACLs e interfaces de redes permitiendo mitigar riesgos de intrusion y aislando el servidor web evitando movimientos laterales, evitando en caso de comprometerse el servidor no signifique una brecha en la seguridad interna de la organización 
 
-**Ejemplo:**
-Aprendí a aplicar NAT y ACLs en un entorno simulado. Recomiendo verificar conectividad básica antes de aplicar reglas de firewall, ya que un error en la IP puede bloquear todo.
+Nota:
+Al aprender sobre las listas de acceso me di cuenta que una manera profesional seria usando ACLs nombradas y no con numeros de grupos, hace mas facil la identificación de las listas y mejor administrable
 
-
-### 7. Capturas de evidencia
-
-> Adjunta aquí (o en un PDF anexo) las capturas solicitadas: pings, navegador, comandos `show`, etc.
