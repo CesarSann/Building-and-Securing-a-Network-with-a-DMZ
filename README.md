@@ -102,16 +102,16 @@ access-list 100 deny ip 192.168.2.0 0.0.0.255 192.168.1.0 0.0.0.255
 
 - `ping` desde PC_Internal al servidor web: 
 
-![alt text](image.png)
+![alt text](assets/image.png)
 
 - Acceso web desde PC_External: ✅
 
-![alt text](image-1.png)
+![alt text](assets/image-1.png)
 
 
 - Bloqueo de acceso desde DMZ a LAN: ✅
 
-![alt text](image-2.png)
+![alt text](assets/image-2.png)
 
 ### 6. Conclusiones y recomendaciones
 
